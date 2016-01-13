@@ -11,6 +11,8 @@ class NamespaceHelper
      * Register plugin namespace.
      *
      * @param string $pluginName Name of the plugin
+     *
+     * @return bool
      */
     public static function registerPluginNamespace($pluginName)
     {
@@ -21,6 +23,8 @@ class NamespaceHelper
         }
 
         self::registerModelNamespace($path);
+
+        return true;
     }
 
     /**
