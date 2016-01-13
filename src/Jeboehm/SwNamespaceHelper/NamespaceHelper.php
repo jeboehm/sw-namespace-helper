@@ -3,6 +3,7 @@
 namespace Jeboehm\SwNamespaceHelper;
 
 use InvalidArgumentException;
+use Shopware\Models\Plugin\Plugin;
 
 class NamespaceHelper
 {
@@ -10,12 +11,10 @@ class NamespaceHelper
      * Register plugin namespace.
      *
      * @param string $pluginName Name of the plugin
-     * @param string $type       Plugin type (backend, frontend)
-     * @param string $namespace  Plugin namespace (local, community, commercial)
      */
-    public static function registerPluginNamespace($pluginName, $type, $namespace = 'local')
+    public static function registerPluginNamespace($pluginName)
     {
-        $path = self::getPath($pluginName, $type, $namespace);
+        $path = self::getPath($pluginName);
 
         if (!is_dir($path)) {
             throw new InvalidArgumentException(sprintf('Plugin path %s doesn\'t exist.', $path));
@@ -28,19 +27,26 @@ class NamespaceHelper
      * Get path.
      *
      * @param string $pluginName Name of the plugin
-     * @param string $type       Plugin type (backend, frontend)
-     * @param string $namespace  Plugin namespace (local, community, commercial)
      *
      * @return string
      */
-    protected static function getPath($pluginName, $type, $namespace)
+    protected static function getPath($pluginName)
     {
+        $repository = Shopware()->Models()->getRepository('Shopware\Models\Plugin\Plugin');
+
+        /** @var Plugin $plugin */
+        $plugin = $repository->findOneBy(['name' => $pluginName]);
+
+        if (!$plugin) {
+            throw new InvalidArgumentException(sprintf('Plugin %s not found.', $pluginName));
+        }
+
         return Shopware()->AppPath(
             sprintf(
                 'Plugins/%s/%s/%s',
-                ucfirst(strtolower($namespace)),
-                ucfirst(strtolower($type)),
-                $pluginName
+                $plugin->getSource(),
+                $plugin->getNamespace(),
+                $plugin->getName()
             )
         );
     }
