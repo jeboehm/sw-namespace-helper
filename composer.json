@@ -1,0 +1,16 @@
+{
+  "name": "jeboehm/sw-namespace-helper",
+  "description": "Simple helper classes to add namespaces to the Shopware loader",
+  "authors": [
+    {
+      "name": "Jeffrey Boehm",
+      "email": "post@jeffrey-boehm.de"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-0": {
+      "Jeboehm\\": "src/"
+    }
+  }
+}
