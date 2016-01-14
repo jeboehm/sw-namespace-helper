@@ -22,6 +22,7 @@ class NamespaceHelper
             throw new InvalidArgumentException(sprintf('Plugin path %s doesn\'t exist.', $path));
         }
 
+        self::registerBaseNamespace($pluginName, $path);
         self::registerModelNamespace($path);
 
         return true;
@@ -64,6 +65,25 @@ class NamespaceHelper
      */
     protected static function registerModelNamespace($path)
     {
-        Shopware()->Loader()->registerNamespace('Shopware\CustomModels', $path . 'Models/');
+        $modelDirectory = $path . 'Models/';
+
+        if (is_dir($modelDirectory)) {
+            Shopware()->Loader()->registerNamespace('Shopware\CustomModels', $modelDirectory);
+            Shopware()->ModelAnnotations()->addPaths([$modelDirectory]);
+        }
+    }
+
+    /**
+     * @param string $pluginName Name of the plugin
+     * @param string $path       Plugin path.
+     *
+     * @return void
+     */
+    protected static function registerBaseNamespace($pluginName, $path)
+    {
+        Shopware()->Loader()->registerNamespace(
+            sprintf('ShopwarePlugins\%s', $pluginName),
+            $path
+        );
     }
 }
