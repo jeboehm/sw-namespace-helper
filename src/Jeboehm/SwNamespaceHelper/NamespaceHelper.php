@@ -10,21 +10,21 @@ class NamespaceHelper
     /**
      * Register plugin namespace.
      *
-     * @param string $pluginName Name of the plugin.
+     * @param string $pluginName        Name of the plugin
+     * @param string $directoryAppendix Append something to the path.
      *
      * @return bool
-     * @throws InvalidArgumentException
      */
-    public static function registerPluginNamespace($pluginName)
+    public static function registerPluginNamespace($pluginName, $directoryAppendix = '')
     {
-        if (strlen($pluginName) < 1) {
-            throw new InvalidArgumentException('Specify a plugin name.');
-        }
-
         $path = self::getPath($pluginName);
 
+        if ($directoryAppendix !== '') {
+            $path = sprintf('%s%s/', $path, rtrim($directoryAppendix, '/'));
+        }
+
         if (!is_dir($path)) {
-            throw new InvalidArgumentException(sprintf('Plugin path "%s" doesn\'t exist.', $path));
+            throw new InvalidArgumentException(sprintf('Plugin path %s doesn\'t exist.', $path));
         }
 
         self::registerBaseNamespace($pluginName, $path);
@@ -36,10 +36,9 @@ class NamespaceHelper
     /**
      * Get path.
      *
-     * @param string $pluginName Name of the plugin.
+     * @param string $pluginName Name of the plugin
      *
      * @return string
-     * @throws InvalidArgumentException
      */
     protected static function getPath($pluginName)
     {
@@ -49,7 +48,7 @@ class NamespaceHelper
         $plugin = $repository->findOneBy(['name' => $pluginName]);
 
         if (!$plugin) {
-            throw new InvalidArgumentException(sprintf('Plugin "%s" not found.', $pluginName));
+            throw new InvalidArgumentException(sprintf('Plugin %s not found.', $pluginName));
         }
 
         return Shopware()->AppPath(
@@ -80,9 +79,7 @@ class NamespaceHelper
     }
 
     /**
-     * Register base plugin namespace.
-     *
-     * @param string $pluginName Name of the plugin.
+     * @param string $pluginName Name of the plugin
      * @param string $path       Plugin path.
      *
      * @return void
