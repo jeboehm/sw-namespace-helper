@@ -18,18 +18,18 @@ class NamespaceHelper
      */
     public static function registerPluginNamespace($pluginName, $directoryAppendix = '')
     {
-        $path = self::getPath($pluginName);
-
         if (strlen($pluginName) < 1) {
-            throw new InvalidArgumentException('Specify a plugin name.');
+            throw new InvalidArgumentException('Specify a plugin name.', 100);
         }
+
+        $path = self::getPath($pluginName);
 
         if ($directoryAppendix !== '') {
             $path = sprintf('%s%s/', $path, rtrim($directoryAppendix, '/'));
         }
 
         if (!is_dir($path)) {
-            throw new InvalidArgumentException(sprintf('Plugin path "%s" doesn\'t exist.', $path));
+            throw new InvalidArgumentException(sprintf('Plugin path "%s" doesn\'t exist.', $path), 200);
         }
 
         self::registerBaseNamespace($pluginName, $path);
@@ -54,7 +54,7 @@ class NamespaceHelper
         $plugin = $repository->findOneBy(['name' => $pluginName]);
 
         if (!$plugin) {
-            throw new InvalidArgumentException(sprintf('Plugin "%s" not found.', $pluginName));
+            throw new InvalidArgumentException(sprintf('Plugin "%s" not found.', $pluginName), 300);
         }
 
         return Shopware()->AppPath(
