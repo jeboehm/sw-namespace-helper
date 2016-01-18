@@ -28,4 +28,12 @@ class NamespaceHelperTest extends Enlight_Components_Test_Plugin_TestCase
     {
         NamespaceHelper::registerPluginNamespace('adsasd');
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testRegisterEmptyPluginName()
+    {
+        NamespaceHelper::registerPluginNamespace('');
+    }
 }
