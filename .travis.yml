@@ -1,0 +1,26 @@
+language: php
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+
+cache:
+   directories:
+     - $HOME/.composer/cache/files
+
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y unzip
+
+before_script:
+    - wget https://github.com/shopware/shopware/archive/5.1.zip -O /tmp/shopware.zip
+    - cd /tmp && unzip shopware.zip
+    - cd /tmp/shopware-5.1 && ant -f build/build.xml -Ddb.user=travis -Ddb.host=127.0.0.1 -Ddb.name=shopware build-unit
+    - cd /tmp/shopware-5.1 && composer require jeboehm/sw-namespace-helper dev-master
+    - rm -rf /tmp/shopware-5.1/vendor/jeboehm/sw-namespace-helper/*
+    - cp -a $TRAVIS_BUILD_DIR/* /tmp/shopware-5.1/vendor/jeboehm/sw-namespace-helper/
+
+script:
+    - phpunit -c /tmp/shopware-5.1/tests/Shopware/phpunit.xml.dist /tmp/shopware-5.1/vendor/jeboehm/sw-namespace-helper/
